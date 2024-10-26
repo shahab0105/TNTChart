@@ -1,11 +1,61 @@
 import React, { useEffect, useState } from "react";
 import TokenRow from "./common/TokenRow";
+import Modal from 'react-modal';
+import {
+  formatNumber,
+  checkTokenSymbol,
+} from "../utils/funcs";
 import "./style.css";
+//ensure the token has the same structure, this is where we should be using static types
+const dummyToken = {
+  name: "Sample Token",
+  symbol: "STK",
+  price: "$5.25",
+  marketCap: "$10,000,000",
+  volume: "$500,000",
+  circulatingSupply: "2,000,000 STK",
+  totalSupply: "10,000,000 STK",
+  description: "A sample token used for testing purposes.",
+  website: "https://sampletoken.org"
+};
+
+const TokenInfoModal = ({ isOpen, onClose, token }) => {
+  return (
+      <Modal isOpen={isOpen} onRequestClose={onClose}  style={{
+        overlay: { 
+            zIndex: 1000, 
+            backgroundColor: 'rgba(0, 0, 0, 0.5)' 
+        },
+        content: { 
+            top: '10%', 
+            left: '10%', 
+            right: '10%', 
+            bottom: '10%',
+            backgroundColor: '#191919', // Same as table background
+            color: 'white', // Font color to match
+            border: '1px solid #444', // Border similar to table style
+            borderRadius: '8px', 
+            padding: '20px',
+            fontFamily: 'inherit'
+        }
+    }}>
+           <h2>{token?.symbol}</h2>
+      <p>Price: ${token?.derivedUSD}</p>
+      <p>Market Cap: ${formatNumber(token?.tradeVolumeUSD)}</p>
+      <p>Liquidity: ${formatNumber(token?.totalLiquidityUSD)}</p>
+      <p>Volume: ${formatNumber(token?.tradeVolume)}</p>
+      <p>24H Volume ETH: {token?.volume24HrsETH}</p>
+      <p>Trade Volume ETH: {token?.tradeVolumeETH}</p>
+          <button onClick={onClose}>Close</button>
+      </Modal>
+  );
+};
 
 const TokenTable = ({ tokenData }) => {
   const [sortedData, setSortedData] = useState([...tokenData]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
-
+  const [selectedToken, setSelectedToken] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const sortData = (key) => {
     let direction = "asc";
     if (
@@ -96,10 +146,18 @@ const TokenTable = ({ tokenData }) => {
         </thead>
         <tbody style={{ backgroundColor: "black" }}>
           {[...sortedData].map((rowData, index) => (
-            <TokenRow data={rowData} key={index} />
+            <TokenRow data={rowData} key={index} onClick={() => {
+              setSelectedToken(rowData);
+              setIsModalOpen(true);
+          }}/>
           ))}
         </tbody>
       </table>
+      <TokenInfoModal 
+    isOpen={isModalOpen} 
+    onClose={() => setIsModalOpen(false)} 
+    token={selectedToken || dummyToken} 
+/>
     </div>
   );
 };

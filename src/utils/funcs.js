@@ -9,6 +9,9 @@ const checkImg = async (imgUrl) => {
 }
 
 function formatNumber(number) {
+    if (isNaN(number) || number === null || number === undefined) {
+        return "N/A"; // Fallback text if the number is invalid -->code broke here previously
+    }
     if (Math.abs(number) >= 1.0e+9) {
         return (number / 1.0e+9).toFixed(2) + "B";
     } else if (Math.abs(number) >= 1.0e+6) {

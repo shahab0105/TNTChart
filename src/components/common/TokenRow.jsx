@@ -4,8 +4,8 @@ import { svg2img } from "../../utils/randomAvatar";
 import { green } from "@mui/material/colors";
 import { removeW } from "../../utils/funcs";
 import "./style.css";
-
-const TokenRow = ({ data }) => {
+//pass onclick
+const TokenRow = ({ data, onClick }) => {
   const [imageExists, setImageExists] = useState(false);
 
   // useEffect(() => {
@@ -22,7 +22,8 @@ const TokenRow = ({ data }) => {
   // }, [data.symbol]);
 
   return (
-    <tr>
+    //add onlick here to propogate from parent component
+    <tr onClick={onClick}> 
       <td
         style={{
           display: "flex",
@@ -50,7 +51,7 @@ const TokenRow = ({ data }) => {
           }
         />
         <div className="font-header" style={{ marginRight: "3px" }}>
-          {removeW(data.symbol)}
+         {removeW(data.symbol)}
         </div>
 
         <span
